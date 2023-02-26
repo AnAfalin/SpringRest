@@ -9,7 +9,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/first/users", produces = "application/xml")
+@RequestMapping(value = "/first/users")
 public class UserController {
     private final UserService userService;
 

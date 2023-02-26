@@ -5,6 +5,15 @@
 
 // 3
 1-ый вариант: настройка JacksonConfig
+@Configuration
+public class JacksonConfig {
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new XmlMapper();
+    }
+
+}
 2-ой вариант: подключение зависимости
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
