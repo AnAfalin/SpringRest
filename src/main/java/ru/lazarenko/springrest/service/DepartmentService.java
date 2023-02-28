@@ -35,10 +35,7 @@ public class DepartmentService {
 
     @Transactional
     public void updateDepartment(Integer id, Department department){
-        Department updatableDepartment = departmentRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Department with id='%d' not found".formatted(id)));
-
+        Department updatableDepartment = getDepartmentById(id);
         updatableDepartment.setTitle(department.getTitle());
 
         departmentRepository.save(updatableDepartment);
@@ -50,13 +47,9 @@ public class DepartmentService {
     }
 
     @Transactional
-    public void transferAllEmployees(Integer departmentFromId, Integer departmentToId) {
-        Department fromDepartment = departmentRepository.findById(departmentFromId)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Department with id='%d' not found".formatted(departmentFromId)));
-        Department toDepartment = departmentRepository.findById(departmentToId)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Department with id='%d' not found".formatted(departmentToId)));
+    public void transferAllEmployees(Integer idFromDepartment, Integer idToDepartment) {
+        Department fromDepartment = getDepartmentById(idFromDepartment);
+        Department toDepartment = getDepartmentById(idToDepartment);
 
         for (Employee employee : fromDepartment.getEmployees()) {
             toDepartment.addEmployee(employee);
@@ -66,5 +59,23 @@ public class DepartmentService {
 
         departmentRepository.save(fromDepartment);
         departmentRepository.save(toDepartment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Employee> getEmployeesByDepartmentId(Integer id) {
+        return departmentRepository.findEmployeesByDepartmentId(id);
+    }
+
+    @Transactional
+    public void addEmployeeByDepartmentId(Employee employee, Integer idDepartment) {
+        Department updatableDepartment = getDepartmentById(idDepartment);
+
+        updatableDepartment.addEmployee(employee);
+        departmentRepository.save(updatableDepartment);
+    }
+
+    @Transactional
+    public void deleteEmployeeByDepartmentId(Integer employeeId, Integer idDepartment) {
+        departmentRepository.deleteEmployeeById(employeeId, idDepartment);
     }
 }

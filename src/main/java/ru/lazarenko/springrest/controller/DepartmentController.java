@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.lazarenko.springrest.entity.Department;
 import ru.lazarenko.springrest.entity.Employee;
 import ru.lazarenko.springrest.service.DepartmentService;
-import ru.lazarenko.springrest.service.EmployeeService;
 
 import java.util.List;
 
@@ -14,7 +13,6 @@ import java.util.List;
 @RequestMapping(value = "second/departments")
 public class DepartmentController {
     private final DepartmentService departmentService;
-    private final EmployeeService employeeService;
 
     @GetMapping
     public List<Department> getAllDepartments(){
@@ -42,26 +40,26 @@ public class DepartmentController {
         departmentService.deleteDepartment(departmentId);
     }
 
-    @GetMapping("/employees/{departmentId}")
+    @GetMapping("/{departmentId}/employees")
     public List<Employee> getEmployeesByDepartmentId(@PathVariable Integer departmentId){
-        return employeeService.getEmployeesByDepartmentId(departmentId);
+        return departmentService.getEmployeesByDepartmentId(departmentId);
     }
 
     @PostMapping("/{departmentId}")
     public void addEmployee(@RequestBody Employee employee, @PathVariable Integer departmentId){
-        employeeService.addEmployeeByDepartmentId(employee, departmentId);
+        departmentService.addEmployeeByDepartmentId(employee, departmentId);
     }
 
-    @DeleteMapping("/employee/{employeeId}/{departmentId}")
+    @DeleteMapping("/{departmentId}/employees/{employeeId}")
     public void deleteEmployee(@PathVariable Integer employeeId, @PathVariable Integer departmentId){
-        employeeService.deleteEmployeeByDepartmentId(employeeId, departmentId);
+        departmentService.deleteEmployeeByDepartmentId(employeeId, departmentId);
     }
 
 
-    @PutMapping("{departmentFromId}/{departmentToId}")
-    public void transferAllEmployees(@PathVariable Integer departmentFromId,
-                                     @PathVariable Integer departmentToId){
-        departmentService.transferAllEmployees(departmentFromId, departmentToId);
+    @PutMapping("/departments/transfer/from/{deptFromId}/to/{deptToId}")
+    public void transferAllEmployees(@PathVariable Integer deptFromId,
+                                     @PathVariable Integer deptToId){
+        departmentService.transferAllEmployees(deptFromId, deptToId);
     }
 
 

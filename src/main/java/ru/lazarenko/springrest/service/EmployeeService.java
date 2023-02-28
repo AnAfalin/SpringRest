@@ -69,6 +69,7 @@ public class EmployeeService {
         return employeeRepository.findAllEmployeesByDepartmentId(id);
     }
 
+
     @Transactional
     public void addEmployeeByDepartmentId(Employee employee, Integer departmentId) {
         Department department = departmentService.getDepartmentById(departmentId);

@@ -5,8 +5,6 @@ import lombok.*;
 
 import static jakarta.persistence.CascadeType.*;
 
-@Builder
-
 @NoArgsConstructor  // конструктор без параметров
 @AllArgsConstructor // конструктор со всеми полями
 @Getter // геттеры

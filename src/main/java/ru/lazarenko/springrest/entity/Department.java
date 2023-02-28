@@ -13,7 +13,6 @@ import static jakarta.persistence.GenerationType.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Getter
 @Setter
 @Entity

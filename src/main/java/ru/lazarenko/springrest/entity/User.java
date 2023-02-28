@@ -3,7 +3,6 @@ package ru.lazarenko.springrest.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Builder
 @Getter
 @Setter
 @AllArgsConstructor
