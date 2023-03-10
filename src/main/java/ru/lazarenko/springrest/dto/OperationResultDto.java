@@ -7,7 +7,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Response {
+public class OperationResultDto {
     Boolean success;
     String message;
 }

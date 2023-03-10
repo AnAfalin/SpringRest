@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.lazarenko.springrest.dto.DepartmentDto;
+import ru.lazarenko.springrest.dto.EmployeeDepartmentDto;
 import ru.lazarenko.springrest.dto.EmployeeDto;
-import ru.lazarenko.springrest.dto.Response;
+import ru.lazarenko.springrest.dto.OperationResultDto;
 import ru.lazarenko.springrest.entity.Department;
 import ru.lazarenko.springrest.entity.Employee;
 import ru.lazarenko.springrest.repository.DepartmentRepository;
@@ -53,20 +54,20 @@ public class DepartmentService {
     }
 
     @Transactional
-    public Response updateDepartment(Integer id, DepartmentDto departmentDto){
+    public OperationResultDto updateDepartment(Integer id, DepartmentDto departmentDto){
         Optional<Department> departmentOptional = departmentRepository.findById(id);
         Department updatableDepartment;
 
         if(departmentOptional.isEmpty()){
             updatableDepartment = new Department();
             departmentRepository.save(updatableDepartment);
-            return new Response(false, "Department by id='%s' not found. Department created".formatted(id));
+            return new OperationResultDto(false, "Department by id='%s' not found. Department created".formatted(id));
         }else {
             updatableDepartment = departmentOptional.get();
             updatableDepartment.setTitle(departmentDto.getTitle());
         }
         departmentRepository.save(updatableDepartment);
-        return new Response(true, "Department updated");
+        return new OperationResultDto(true, "Department updated");
     }
 
     @Transactional
@@ -93,34 +94,34 @@ public class DepartmentService {
         departmentRepository.save(toDepartment);
     }
 
-    // TODO в ответе не должно быть департамента
     @Transactional(readOnly = true)
     public List<EmployeeDto> getEmployeesByDepartmentId(Integer id) {
         List<Employee> employees = departmentRepository.findEmployeesByDepartmentId(id);
-        List<EmployeeDto> employeesDto = new ArrayList<>();
+        List<EmployeeDto> employeeDtos = new ArrayList<>();
+
         for (Employee employee : employees) {
-            employeesDto.add(new EmployeeDto(employee.getName(), employee.getEmail(), employee.getDepartment().getTitle()));
+            employeeDtos.add(new EmployeeDto(employee.getName(), employee.getEmail()));
         }
-        return employeesDto;
+        return employeeDtos;
     }
 
     @Transactional
-    public Response addEmployeeByDepartmentId(EmployeeDto employeeDto, Integer idDepartment) {
+    public OperationResultDto addEmployeeByDepartmentId(EmployeeDepartmentDto employeeDepartmentDto, Integer idDepartment) {
         Optional<Department> departmentOptional = departmentRepository.findById(idDepartment);
 
         if(departmentOptional.isEmpty()){
-            return new Response(false, "Department by id='%s' not found".formatted(idDepartment));
+            return new OperationResultDto(false, "Department by id='%s' not found".formatted(idDepartment));
         }
         Department updatableDepartment = departmentOptional.get();
 
         Employee employee = new Employee();
-        employee.setEmail(employeeDto.getEmail());
-        employee.setName(employeeDto.getName());
+        employee.setEmail(employeeDepartmentDto.getEmail());
+        employee.setName(employeeDepartmentDto.getName());
 
         updatableDepartment.addEmployee(employee);
         departmentRepository.save(updatableDepartment);
 
-        return new Response(true, "Employee added in department with id='%s'".formatted(idDepartment));
+        return new OperationResultDto(true, "Employee added in department with id='%s'".formatted(idDepartment));
 
     }
 

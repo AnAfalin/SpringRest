@@ -3,10 +3,9 @@ package ru.lazarenko.springrest.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.lazarenko.springrest.dto.DepartmentDto;
+import ru.lazarenko.springrest.dto.EmployeeDepartmentDto;
 import ru.lazarenko.springrest.dto.EmployeeDto;
-import ru.lazarenko.springrest.dto.Response;
-import ru.lazarenko.springrest.entity.Department;
-import ru.lazarenko.springrest.entity.Employee;
+import ru.lazarenko.springrest.dto.OperationResultDto;
 import ru.lazarenko.springrest.service.DepartmentService;
 
 import java.util.List;
@@ -33,8 +32,8 @@ public class DepartmentController {
     }
 
     @PutMapping("/{departmentId}")
-    public Response updateDepartment(@PathVariable Integer departmentId,
-                                     @RequestBody DepartmentDto departmentDto){
+    public OperationResultDto updateDepartment(@PathVariable Integer departmentId,
+                                               @RequestBody DepartmentDto departmentDto){
         return departmentService.updateDepartment(departmentId, departmentDto);
     }
 
@@ -48,13 +47,11 @@ public class DepartmentController {
         return departmentService.getEmployeesByDepartmentId(departmentId);
     }
 
-    // TODO сделать через dto
     @PostMapping("/{departmentId}")
-    public Response addEmployee(@RequestBody EmployeeDto employeeDto, @PathVariable Integer departmentId){
-        return departmentService.addEmployeeByDepartmentId(employeeDto, departmentId);
+    public OperationResultDto addEmployee(@RequestBody EmployeeDepartmentDto employeeDepartmentDto, @PathVariable Integer departmentId){
+        return departmentService.addEmployeeByDepartmentId(employeeDepartmentDto, departmentId);
     }
 
-    // TODO сделать через dto
     @DeleteMapping("/{departmentId}/employees/{employeeId}")
     public void deleteEmployee(@PathVariable Integer employeeId, @PathVariable Integer departmentId){
         departmentService.deleteEmployeeByDepartmentId(employeeId, departmentId);
@@ -66,6 +63,5 @@ public class DepartmentController {
                                      @PathVariable Integer deptToId){
         departmentService.transferAllEmployees(deptFromId, deptToId);
     }
-
 
 }

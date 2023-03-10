@@ -20,7 +20,7 @@ public class EmployeeService {
     private final DepartmentService departmentService;
 
     @Transactional
-    public Response saveEmployee(EmployeeAdditionRequest request) {
+    public void saveEmployee(EmployeeAdditionRequest request) {
         Employee employee = new Employee();
 
         employee.setEmail(request.getEmail());
@@ -37,34 +37,36 @@ public class EmployeeService {
         }
 
         employeeRepository.save(employee);
-        return new Response(true, "Employee saved");
     }
 
     @Transactional(readOnly = true)
-    public List<EmployeeWithoutDepartmentDto> getAllEmployees() {
-        List<EmployeeWithoutDepartmentDto> responseList = new ArrayList<>();
+    public List<EmployeeDto> getAllEmployees() {
+        List<EmployeeDto> employeeDtos = new ArrayList<>();
         List<Employee> employees = employeeRepository.findAll();
 
         for (Employee employee : employees) {
-            responseList.add(new EmployeeWithoutDepartmentDto(employee.getName(), employee.getEmail()));
+            employeeDtos.add(new EmployeeDto(employee.getName(), employee.getEmail()));
         }
 
-        return responseList;
+        return employeeDtos;
     }
 
     @Transactional(readOnly = true)
-    public EmployeeDto getEmployeeById(Integer id) {
-        Employee employee = getOrThrowEmployeeById(id);
+    public EmployeeDepartmentDto getEmployeeDtoById(Integer id) {
+        Employee employeeDto = employeeRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(
+                        "Employee with id='%d' not found".formatted(id)));
 
-        return new EmployeeDto(employee.getName(), employee.getEmail(), employee.getDepartment().getTitle());
+        return new EmployeeDepartmentDto(employeeDto.getName(), employeeDto.getEmail(),
+                employeeDto.getDepartment().getTitle());
     }
 
     @Transactional
-    public Response updateEmployee(Integer id, EmployeeAdditionRequest request) {
+    public OperationResultDto updateEmployee(Integer id, EmployeeAdditionRequest request) {
         Optional<Employee> employeeOptional = getOptionalEmployeeById(id);
 
         if(employeeOptional.isEmpty()){
-            return new Response(false, "Updatable employee by id='%s' not found".formatted(id));
+            return new OperationResultDto(false, "Updatable employee by id='%s' not found".formatted(id));
         }
         Employee updatableEmployee = employeeOptional.get();
 
@@ -80,22 +82,22 @@ public class EmployeeService {
             }
         }
         employeeRepository.save(updatableEmployee);
-        return new Response(true, "Employee updated");
+        return new OperationResultDto(true, "Employee updated");
     }
 
     @Transactional
-    public Response deleteEmployee(Integer id) {
+    public OperationResultDto deleteEmployee(Integer id) {
         Optional<Employee> employeeOptional = getOptionalEmployeeById(id);
         if (employeeOptional.isEmpty()) {
-            return new Response(false, "Employee not found");
+            return new OperationResultDto(false, "Employee not found");
         }
 
         employeeRepository.deleteById(id);
-        return new Response(true, "Employee deleted");
+        return new OperationResultDto(true, "Employee deleted");
     }
 
     @Transactional
-    public Response addToDepartment(EmployeeAdditionRequest request) {
+    public OperationResultDto addToDepartment(EmployeeAdditionRequest request) {
         Integer employeeId = request.getEmployeeId();
 
         Employee employee;
@@ -106,7 +108,7 @@ public class EmployeeService {
         } else {
             Optional<Employee> employeeOptional = getOptionalEmployeeById(employeeId);
             if (employeeOptional.isEmpty()) {
-                return new Response(false, "Employee not found");
+                return new OperationResultDto(false, "Employee not found");
             }
             employee = employeeOptional.get();
         }
@@ -120,19 +122,14 @@ public class EmployeeService {
         } else {
             Optional<Department> departmentOptional = departmentService.getDepartmentOptionalById(departmentId);
             if (departmentOptional.isEmpty()) {
-                return new Response(false, "Department not found");
+                return new OperationResultDto(false, "Department not found");
             }
             department = departmentOptional.get();
         }
+
         employee.setDepartment(department);
         employeeRepository.save(employee);
-        return new Response(true, "Operation confirmed");
-    }
-
-    private Employee getOrThrowEmployeeById(Integer employeeId) {
-        return employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Employee with id='%d' not found".formatted(employeeId)));
+        return new OperationResultDto(true, "Operation confirmed");
     }
 
     private Optional<Employee> getOptionalEmployeeById(Integer employeeId) {

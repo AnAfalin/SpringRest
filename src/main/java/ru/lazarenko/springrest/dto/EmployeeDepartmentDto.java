@@ -9,7 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class EmployeeWithoutDepartmentDto {
+public class EmployeeDepartmentDto {
     private String name;
     private String email;
+    private String department;
 }

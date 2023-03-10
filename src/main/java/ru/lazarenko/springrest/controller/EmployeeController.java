@@ -14,33 +14,33 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping
-    public List<EmployeeWithoutDepartmentDto> getAllEmployees() {
+    public List<EmployeeDto> getAllEmployees() {
         return employeeService.getAllEmployees();
     }
 
     @GetMapping("/{employeeId}")
-    public EmployeeDto getEmployeeById(@PathVariable Integer employeeId) {
-        return employeeService.getEmployeeById(employeeId);
+    public EmployeeDepartmentDto getEmployeeById(@PathVariable Integer employeeId) {
+        return employeeService.getEmployeeDtoById(employeeId);
     }
 
     @PostMapping
-    public Response saveEmployee(@RequestBody EmployeeAdditionRequest request) {
-        return employeeService.saveEmployee(request);
+    public void saveEmployee(@RequestBody EmployeeAdditionRequest request) {
+        employeeService.saveEmployee(request);
     }
 
     @PutMapping("/{employeeId}")
-    public Response updateEmployee(@PathVariable Integer employeeId,
-                               @RequestBody EmployeeAdditionRequest request) {
+    public OperationResultDto updateEmployee(@PathVariable Integer employeeId,
+                                             @RequestBody EmployeeAdditionRequest request) {
         return employeeService.updateEmployee(employeeId, request);
     }
 
     @DeleteMapping("/{employeeId}")
-    public Response deleteEmployee(@PathVariable Integer employeeId) {
+    public OperationResultDto deleteEmployee(@PathVariable Integer employeeId) {
         return employeeService.deleteEmployee(employeeId);
     }
 
     @PutMapping("/add-to-department")
-    public Response addToDepartment(@RequestBody EmployeeAdditionRequest request) {
+    public OperationResultDto addToDepartment(@RequestBody EmployeeAdditionRequest request) {
         return employeeService.addToDepartment(request);
     }
 }

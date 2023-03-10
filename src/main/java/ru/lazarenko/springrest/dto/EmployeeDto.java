@@ -12,5 +12,4 @@ import lombok.Setter;
 public class EmployeeDto {
     private String name;
     private String email;
-    private String department;
 }
